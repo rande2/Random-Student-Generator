@@ -4,6 +4,7 @@
  */
 package randomPicker;
 import java.util.List;
+//TODO use Collections.shuffle() and poll() on remaining Names?
 /**
  *
  * @author rande2
