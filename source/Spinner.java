@@ -29,6 +29,10 @@ public class Spinner {
         allNames=n;
         remainingNames=n;
     }
+
+    public void reset(){
+        remainingNames=allNames;
+    }
     
     public String spin(){
         int index = (int)(Math.random()*(remainingNames.size()));
