@@ -29,15 +29,22 @@ public class Spinner {
         allNames=n;
         remainingNames=n;
     }
-
+    
     public void reset(){
         remainingNames=allNames;
     }
     
     public String spin(){
-        int index = (int)(Math.random()*(remainingNames.size()));
-        String name = remainingNames.get(index);
-        remainingNames.remove(index);
-        return name;
+        //limit: can have a maximum number of names of 2^31-1
+        int numNames = remainingNames.size();
+        //only read from list when it contains items
+        if(numNames>0){
+            int index = (int)(Math.random()*(remainingNames.size()));
+            String name = remainingNames.get(index);
+            remainingNames.remove(index);
+            return name;
+        }else{
+            return null;
+        }
     }
 }
