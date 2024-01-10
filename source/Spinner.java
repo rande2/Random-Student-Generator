@@ -4,6 +4,7 @@
  */
 package randomPicker;
 import java.util.List;
+import java.util.LinkedList;
 //TODO use Collections.shuffle() and poll() on remaining Names?
 /**
  *
@@ -11,14 +12,14 @@ import java.util.List;
  */
 public class Spinner {
     private List<String> allNames;
-    private List<String> remainingNames;
+    private LinkedList<String> remainingNames;
     
     Spinner(List<String> n){
         allNames=n;
-        remainingNames=n;
+        remainingNames=new LinkedList<>(n);
     }
     
-    public List<String> getRemainingNames(){
+    public LinkedList<String> getRemainingNames(){
         return remainingNames;
     }
     
@@ -28,11 +29,12 @@ public class Spinner {
     
     public void setNames(List<String> n){
         allNames=n;
-        remainingNames=n;
+        reset();
     }
     
     public void reset(){
-        remainingNames=allNames;
+        remainingNames.clear();
+        remainingNames.addAll(allNames);
     }
     
     public String spin(){
