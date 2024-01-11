@@ -3,8 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package randomPicker;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.List;
-import java.util.LinkedList;
 //TODO use Collections.shuffle() and poll() on remaining Names?
 /**
  *
@@ -12,14 +13,13 @@ import java.util.LinkedList;
  */
 public class Spinner {
     private List<String> allNames;
-    private LinkedList<String> remainingNames;
+    private List<String> remainingNames;
     
     Spinner(List<String> n){
-        allNames=n;
-        remainingNames=new LinkedList<>(n);
+        setNames(n);
     }
     
-    public LinkedList<String> getRemainingNames(){
+    public List<String> getRemainingNames(){
         return remainingNames;
     }
     
@@ -27,9 +27,14 @@ public class Spinner {
         return allNames;
     }
     
-    public void setNames(List<String> n){
+    public final void setNames(List<String> n){
         allNames=n;
-        reset();
+        try{
+            remainingNames=allNames.getClass().getConstructor().newInstance();
+            remainingNames.addAll(allNames);
+        }catch(Exception ex){
+            Logger.getLogger(Spinner.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public void reset(){
