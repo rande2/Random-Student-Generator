@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Paths;
+import java.util.List;
 
 /**
  *
@@ -30,6 +31,7 @@ public class IO {
     //methods that allow files to be read correctly when
     //running the program from an IDE
     //and when running the jar file
+    //limitations: must create a new output stream each time you want to write
     private static String programDir;
     private static String userHome;
 
@@ -43,7 +45,7 @@ public class IO {
         int progDirLen = programDir.length();
         int lengthDiff = progDirLen - jarLength;
         boolean isJar = true;
-        
+
         //check of the path ends with ".jar"
         for (int i = 0; i < jarLength; i++) {
             if (jar.charAt(i) != (programDir.charAt(i + lengthDiff))) {
@@ -98,7 +100,9 @@ public class IO {
         try {
             if (location != Location.JAR) {
                 //use newInputStream to create an input stream to the file
-                result = Files.newInputStream(Paths.get((location == Location.PROGRAM ? programDir : userHome) + filename));
+                result = Files.newInputStream(
+                        Paths.get((location == Location.PROGRAM ? programDir : userHome) + filename)
+                );
             } else {
                 //use getResourceAsStream to create an input stream to the file in the JAR
                 result = IO.class.getResourceAsStream(filename);
@@ -109,6 +113,35 @@ public class IO {
         return result;
     }
 
+    public static LinkedList<String> readLines(String fileName, Location location) {
+        String line;
+        LinkedList<String> result = new LinkedList<>();
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(getInputStream(fileName, location))
+        )) {
+            while ((line = reader.readLine()) != null) {
+                //add each line as a separate element of the linked list
+                result.add(line);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+
+    public static String readString(String fileName, Location location) {
+        String result = null;
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(getInputStream(fileName, location))
+        )) {
+            //merge the lines as a single string
+            result = reader.lines().collect(Collectors.joining(System.lineSeparator()));
+        } catch (Exception ex) {
+            Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+    
     public static OutputStream getOutputStream(String filename, Location location, OpenOption... o) {
         OutputStream result = null;
         //can't write to files in a JAR
@@ -122,33 +155,24 @@ public class IO {
         return result;
     }
 
-    public static LinkedList<String> readLines(InputStream in) {
-        String line;
-        LinkedList<String> result = new LinkedList<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            while ((line = reader.readLine()) != null) {
-                //add each line as a separate element of the linked list
-                result.add(line);
+    public static boolean writeLines(String fileName, Location location, List<String> data, OpenOption... o) {
+        try (BufferedOutputStream bufferedOut = new BufferedOutputStream(
+                getOutputStream(fileName, location, o))) {
+            for (String i : data) {
+                bufferedOut.write(i.getBytes());
+                bufferedOut.write(System.lineSeparator().getBytes());
             }
+            return true;
         } catch (IOException ex) {
             Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return result;
+        return false;
     }
 
-    public static String readString(InputStream in) {
-        String result = null;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            //merge the lines as a single string
-            result = reader.lines().collect(Collectors.joining(System.lineSeparator()));
-        } catch (IOException ex) {
-            Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return result;
-    }
-
-    public static boolean writeString(OutputStream out, String data) {
-        try (BufferedOutputStream bufferedOut = new BufferedOutputStream(out)) {
+    public static boolean writeString(String fileName, Location location, String data, OpenOption... o) {
+        try (BufferedOutputStream bufferedOut = new BufferedOutputStream(
+                getOutputStream(fileName, location, o)
+        )) {
             bufferedOut.write(data.getBytes());
             return true;
         } catch (IOException ex) {
@@ -156,25 +180,15 @@ public class IO {
         }
         return false;
     }
-    
-    public static boolean newLine(OutputStream out){
-        try (BufferedOutputStream bufferedOut = new BufferedOutputStream(out)) {
-            bufferedOut.write(System.getProperty("line.separator").getBytes());
-            return true;
+
+    public static Image readImage(String fileName, Location location) {
+        Image image = null;
+        try {
+            //return the image from the file
+            image = javax.imageio.ImageIO.read(getInputStream(fileName, location));
         } catch (IOException ex) {
             Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return false;
-    }
-    
-    public static Image readImage(InputStream in){
-    Image image=null;
-    try {
-        //return the image from the file
-        image=javax.imageio.ImageIO.read(in);
-        } catch (IOException ex) {
-            Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    return image;
+        return image;
     }
 }
