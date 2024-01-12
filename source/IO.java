@@ -2,6 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
+
+/*
+ *Note: This file has been replaced with FileResource.java
+ *A change will be made to the Main.java file soon to work with the changes
+ */
 package fileio;
 
 import java.io.BufferedReader;
