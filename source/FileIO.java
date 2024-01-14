@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package fileio;
+package randomPicker;
 
 import java.awt.Image;
 import java.io.BufferedReader;
@@ -112,27 +112,23 @@ public class FileIO {
         return result;
     }
 
-    public static boolean writeLines(File file,List<String> data, OpenOption... o) {
+    public static void writeLines(File file,List<String> data, OpenOption... o) {
         try (BufferedOutputStream bufferedOut = new BufferedOutputStream(Files.newOutputStream(file.toPath(), o))) {
             for (String i : data) {
                 bufferedOut.write(i.getBytes());
                 bufferedOut.write(System.lineSeparator().getBytes());
             }
-            return true;
         } catch (IOException ex) {
             Logger.getLogger(FileIO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return false;
     }
 
-    public static boolean writeString(File file,String data, OpenOption... o) {
+    public static void writeString(File file,String data, OpenOption... o) {
         try (BufferedOutputStream bufferedOut = new BufferedOutputStream(Files.newOutputStream(file.toPath(), o))) {
             bufferedOut.write(data.getBytes());
-            return true;
         } catch (IOException ex) {
             Logger.getLogger(FileIO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return false;
     }
     
     public static Image readImage(File file){
