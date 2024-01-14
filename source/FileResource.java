@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package randomPicker;
+package fileio;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,7 +35,11 @@ public class FileResource {
     private static final String USER_HOME = findUserHome();
 
     FileResource(String n, Location l, OpenOption... o) {
-        path = l != Location.JAR ? (location == Location.PROGRAM ? PROGRAM_DIR : USER_HOME) : n;
+        StringBuilder builder = new StringBuilder();
+        if(l!=Location.JAR)
+            builder.append(l == Location.PROGRAM ? PROGRAM_DIR : USER_HOME);
+        builder.append(n);
+        path=builder.toString();
         location = l;
         openOptions = o;
     }
@@ -95,10 +99,10 @@ public class FileResource {
             if (location != Location.JAR) {
                 result = new File(path);
             } else {
-                result = new File(IO.class.getResource(path).toURI());
+                result = new File(FileResource.class.getResource(path).toURI());
             }
         } catch (URISyntaxException ex) {
-            Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FileResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
     }
@@ -113,10 +117,11 @@ public class FileResource {
                 );
             } else {
                 //use getResourceAsStream to create an input stream to the file in the JAR
-                result = IO.class.getResourceAsStream(path);
+                result = FileResource.class.getResourceAsStream(path);
             }
         } catch (IOException ex) {
-            Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Whoops!");
+            Logger.getLogger(FileResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
     }
@@ -132,7 +137,7 @@ public class FileResource {
                 result.add(line);
             }
         } catch (IOException ex) {
-            Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FileResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
     }
@@ -145,7 +150,7 @@ public class FileResource {
             //merge the lines as a single string
             result = reader.lines().collect(Collectors.joining(System.lineSeparator()));
         } catch (Exception ex) {
-            Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FileResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
     }
@@ -157,7 +162,7 @@ public class FileResource {
             try {
                 result = Files.newOutputStream(Paths.get(path), openOptions);
             } catch (IOException ex) {
-                Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FileResource.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return result;
@@ -172,7 +177,7 @@ public class FileResource {
             }
             return true;
         } catch (IOException ex) {
-            Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FileResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }
@@ -184,7 +189,7 @@ public class FileResource {
             bufferedOut.write(data.getBytes());
             return true;
         } catch (IOException ex) {
-            Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FileResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;
     }
@@ -195,7 +200,7 @@ public class FileResource {
             //return the image from the file
             image = javax.imageio.ImageIO.read(getInputStream());
         } catch (IOException ex) {
-            Logger.getLogger(IO.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FileResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return image;
     }
