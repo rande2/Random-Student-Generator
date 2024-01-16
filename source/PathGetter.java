@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package bankProject;
+package randomPicker;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,8 +27,8 @@ public class PathGetter {
         String dir = new File(System.getProperty("java.class.path")).getAbsolutePath();
         Path path = Paths.get(dir);
         if(!Files.isDirectory(path))
-            return path.getParent().toString()+System.getProperty("file.separator");
-        return path.toString();
+            return path.getParent().toString();
+        return path.toString()+System.getProperty("file.separator");
         
     }
 
