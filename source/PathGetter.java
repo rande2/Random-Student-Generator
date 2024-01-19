@@ -2,9 +2,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package randomPicker;
+package bankProject;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,46 +16,63 @@ import java.util.logging.Logger;
  * @author rande2
  */
 public class PathGetter {
-    private static final String PROGRAM_DIR = findProgramDir();
-    private static final String USER_HOME = findUserHome();
 
-    public enum Location{PROGRAM,HOME};
-    
-    private static String findProgramDir() {
-        //get path to the JAR file or build folder
-        String dir = new File(System.getProperty("java.class.path")).getAbsolutePath();
-        Path path = Paths.get(dir);
-        if(!Files.isDirectory(path))
-            return path.getParent().toString();
-        return path.toString()+System.getProperty("file.separator");
-        
+    //private static final Path PROGRAM_DIR = findProgramDir();
+    private static final Path USER_HOME = Paths.get(System.getProperty("user.home"));
+    private static final char sep = System.getProperty("file.separator").charAt(0);
+    private static final Path PROGRAM_DIR = findProgDir();
+
+    public static Path findProgDir() {
+        String path = PathGetter.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
+        //if run from jar, the path ends with the jar file
+        String jar = "raj.";
+        boolean isJar = false;
+        int sim = 0;
+        for (int i = path.length() - 1; i > 0; i--) {
+            if (isJar) {
+                if (path.charAt(i) == '/') {
+                    path = path.substring(0,i);
+                    break;
+                }
+            } else {
+                if (path.charAt(i) == jar.charAt(sim++)) {
+                    if (sim == jar.length()) {
+                        isJar = true;
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
+        return Paths.get(path);
     }
 
-    private static String findUserHome() {
-        return new File(System.getProperty("user.home")).getAbsolutePath() + System.getProperty("file.separator");
-    }
-
-    public static String getProgramDir() {
+    public static Path getProgramDir() {
         return PROGRAM_DIR;
     }
 
-    public static String getUserHome() {
+    public static Path getUserHome() {
         return USER_HOME;
     }
-    
-    public static Path getPath(String name, Location l) {
-        return Paths.get((l == Location.PROGRAM ? PROGRAM_DIR : USER_HOME) + name);
+
+    public static Path getFromHome(String name) {
+        return USER_HOME.resolve(name);
     }
-    
-    public static void ensureExistance(Path path){
-        if(!Files.exists(path))
+
+    public static Path programResource(String name) {
+        return PROGRAM_DIR.resolve(name);
+    }
+
+    public static void ensureExistance(Path path) {
+        if (!Files.exists(path))
             try {
-                Path parent = path.getParent();
-                if(!Files.exists(parent))
-                    Files.createDirectories(parent);
-                Files.createFile(path);
-            } catch (IOException ex) {
-                Logger.getLogger(PathGetter.class.getName()).log(Level.SEVERE, null, ex);
+            Path parent = path.getParent();
+            if (!Files.exists(parent)) {
+                Files.createDirectories(parent);
             }
+            Files.createFile(path);
+        } catch (IOException ex) {
+            Logger.getLogger(PathGetter.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
