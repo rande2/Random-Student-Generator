@@ -168,8 +168,12 @@
                               <Component id="jButtonDelete" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jButtonAdd" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
+                          <EmptySpace min="123" max="32767" attributes="0"/>
                       </Group>
-                      <Component id="jPanel3" min="-2" pref="174" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Component id="jPanel3" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
                   </Group>
               </Group>
           </Group>

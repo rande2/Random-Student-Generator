@@ -19,15 +19,17 @@ import java.util.logging.Logger;
  */
 public class JPanelClassCreator extends javax.swing.JPanel {
 
-    private ArrayList<String> names=new ArrayList(25);
+    private ArrayList<String> names = new ArrayList(25);
     private JFrameMain frame;
+
     /**
      * Creates new form JPanelClassCreator
+     *
      * @param f
      */
     public JPanelClassCreator(JFrameMain f) {
         initComponents();
-        frame=f;
+        frame = f;
     }
 
     private void updateAllNames() {
@@ -186,8 +188,11 @@ public class JPanelClassCreator extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButtonDelete)
-                            .addComponent(jButtonAdd)))
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jButtonAdd))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
 
         jButtonCreate.setText("Create");
@@ -252,12 +257,25 @@ public class JPanelClassCreator extends javax.swing.JPanel {
 
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
         String name = jTextFieldName.getText();
-        if (name.length() > 0) {
-            //linear search for the name
-            int index = Search.search(name, names);
-            if (index != -1) {
-                names.remove(index);
+        int length = name.length();
+        char character;
+        //if text was entered
+        if (length > 0) {
+            //ensure it is not only spaces
+            for (int i = 0; i < length; i++) {
+                character = name.charAt(i);
+                if (character != ' ' || character != '\t') {
+                    //linear search for the name
+                    int index = Search.search(name, names);
+                    if (index != -1) {
+                        //remove the name
+                        names.remove(index);
+                        updateAllNames();
+                    }
+                    break;
+                }
             }
+            jTextFieldName.setText("");
         }
     }//GEN-LAST:event_jButtonDeleteActionPerformed
 
@@ -315,13 +333,13 @@ public class JPanelClassCreator extends javax.swing.JPanel {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 frame.setPanel(new JPanelMenu(frame));
-            }else{
+            } else {
                 jTextPaneError.setText("Error: Class already exists");
             }
-        }else{
+        } else {
             jTextPaneError.setText("Error: invalid class name");
         }
-        
+
     }//GEN-LAST:event_jButtonCreateActionPerformed
 
     private void jTextFieldClassNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldClassNameActionPerformed
