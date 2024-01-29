@@ -8,6 +8,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -303,43 +304,63 @@ public class JPanelClassCreator extends javax.swing.JPanel {
         PathGetter.ensureExistance(indexFile);
         String className = jTextFieldClassName.getText();
         jTextFieldClassName.setText("");
-        if (className.length() > 0 && !className.equals("classes")) {
-            ArrayList<String> lines = PathGetter.readLines(indexFile);
-            if (Search.search(className, lines) == -1) {
-                try (BufferedWriter writer = Files.newBufferedWriter(
-                        indexFile,
-                        StandardOpenOption.CREATE,
-                        StandardOpenOption.APPEND
-                )) {
-                    writer.write(className);
-                    writer.newLine();
-                    writer.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                Path newClassFile = PathGetter.programResource("resources/" + className);
-                PathGetter.ensureExistance(newClassFile);
-                try (BufferedWriter writer = Files.newBufferedWriter(
-                        newClassFile,
-                        StandardOpenOption.CREATE,
-                        StandardOpenOption.TRUNCATE_EXISTING
-                )) {
-                    for (String i : names) {
-                        writer.write(i);
-                        writer.newLine();
+        //ensure not a windows reserved file name
+        if (className.length() > 0 && !className.equals("classes")&&!className.contains("COM")&&!className.equals("PRN")&&!className.equals("CON")&&!className.equals("AUX")&&!className.equals("NUL")&&!className.contains("LPT")) {
+            int length = className.length();
+            char character;
+            boolean valid = true;
+            char[] invalids = {'/', '\n', '\r', '\t', '\0', '\f', '`', '?', '*', '\\', '<', '>', '|', '\"', ':'};
+            OUTER:
+            for (int i = 0; i < length; i++) {
+                character = className.charAt(i);
+                for (int j = 0; j < invalids.length; j++) {
+                    if (character == invalids[j]) {
+                        valid = false;
+                        break OUTER;
                     }
-                    writer.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                frame.setPanel(new JPanelMenu(frame));
+            }
+            if (valid) {
+                ArrayList<String> lines = PathGetter.readLines(indexFile);
+                if (Search.search(className, lines) == -1) {
+                    try (BufferedWriter writer = Files.newBufferedWriter(
+                            indexFile,
+                            StandardOpenOption.CREATE,
+                            StandardOpenOption.APPEND
+                    )) {
+                        writer.write(className);
+                        writer.newLine();
+                        writer.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    Path newClassFile = PathGetter.programResource("resources/" + className);
+                    PathGetter.ensureExistance(newClassFile);
+                    try (BufferedWriter writer = Files.newBufferedWriter(
+                            newClassFile,
+                            StandardOpenOption.CREATE,
+                            StandardOpenOption.TRUNCATE_EXISTING
+                    )) {
+                        for (String i : names) {
+                            writer.write(i);
+                            writer.newLine();
+                        }
+                        writer.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    frame.setPanel(new JPanelMenu(frame));
+                } else {
+                    jTextPaneError.setText("Error: Class already exists");
+                }
             } else {
-                jTextPaneError.setText("Error: Class already exists");
+                jTextPaneError.setText("Error: invalid class name");
             }
         } else {
             jTextPaneError.setText("Error: invalid class name");
         }
+
 
     }//GEN-LAST:event_jButtonCreateActionPerformed
 

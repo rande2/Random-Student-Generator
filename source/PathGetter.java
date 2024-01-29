@@ -61,11 +61,19 @@ public class PathGetter {
     }
 
     public static Path getFromHome(String name) {
-        return USER_HOME.resolve(name);
+        try {
+            return USER_HOME.resolve(name);
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     public static Path programResource(String name) {
-        return PROGRAM_DIR.resolve(name);
+        try {
+            return PROGRAM_DIR.resolve(name);
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     public static void ensureExistance(Path path) {
