@@ -133,7 +133,6 @@ public class JPanelClassCreator extends javax.swing.JPanel {
         jPanel3.setLayout(new java.awt.BorderLayout());
 
         jTextPaneAllNames.setEditable(false);
-        jTextPaneAllNames.setFocusable(false);
         jScrollPane1.setViewportView(jTextPaneAllNames);
 
         jPanel3.add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -276,6 +275,7 @@ public class JPanelClassCreator extends javax.swing.JPanel {
                 }
             }
             jTextFieldName.setText("");
+            jTextPaneError.setText("");
         }
     }//GEN-LAST:event_jButtonDeleteActionPerformed
 
@@ -291,6 +291,7 @@ public class JPanelClassCreator extends javax.swing.JPanel {
             if (Search.search(name, names) == -1) {
                 names.add(name);
                 updateAllNames();
+                jTextPaneError.setText("");
             } else {
                 jTextPaneError.setText("Error: Name already entered");
             }
