@@ -44,15 +44,15 @@ public class Spinner {
     
     public String spin(){
         //limit: can have a maximum number of names of 2^31-1
-        int numNames = remainingNames.size();
         //only read from list when it contains items
-        if(numNames>0){
+        String name;
+        if(!remainingNames.isEmpty()){
             int index = (int)(Math.random()*(remainingNames.size()));
-            String name = remainingNames.get(index);
+            name = remainingNames.get(index);
             remainingNames.remove(index);
-            return name;
         }else{
-            return null;
+            name = "No names left";
         }
+        return name;
     }
 }

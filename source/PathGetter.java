@@ -2,12 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package bankProject;
+package randomPicker;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,20 +24,23 @@ public class PathGetter {
     private static final char sep = System.getProperty("file.separator").charAt(0);
     private static final Path PROGRAM_DIR = findProgDir();
 
-    public static Path findProgDir() {
+    private static Path findProgDir() {
+        //get the location of the compiled version of this class
         String path = PathGetter.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1);
         //if run from jar, the path ends with the jar file
         String jar = "raj.";
         boolean isJar = false;
+        char character;
         int sim = 0;
         for (int i = path.length() - 1; i > 0; i--) {
+            character = path.charAt(i);
             if (isJar) {
-                if (path.charAt(i) == '/') {
-                    path = path.substring(0,i);
+                if (character == '/') {
+                    path = path.substring(0, i);
                     break;
                 }
             } else {
-                if (path.charAt(i) == jar.charAt(sim++)) {
+                if (character == jar.charAt(sim++)) {
                     if (sim == jar.length()) {
                         isJar = true;
                     }
@@ -64,9 +69,12 @@ public class PathGetter {
     }
 
     public static void ensureExistance(Path path) {
+        //if the file does not exist
         if (!Files.exists(path))
             try {
+            //get directory containing the file
             Path parent = path.getParent();
+            //if the directory does not exist, create it
             if (!Files.exists(parent)) {
                 Files.createDirectories(parent);
             }
@@ -74,5 +82,18 @@ public class PathGetter {
         } catch (IOException ex) {
             Logger.getLogger(PathGetter.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public static ArrayList<String> readLines(Path path) {
+        ArrayList<String> lines = new ArrayList<>(25);
+        try (BufferedReader reader = Files.newBufferedReader(path)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(PathGetter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return lines;
     }
 }
